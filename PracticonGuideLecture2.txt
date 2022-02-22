@@ -1,0 +1,233 @@
+random numbers - question 1
+    > Patty's runs are all different, each time you start up Python and then use the random number generator, it is seeded in a random manner.
+    > The 6 simulation runs Mark created on Sunday are an exact copy of the first 6 simulations on Saturday, invalidating his results.
+Explanation: 
+    Matlab resets the 'starting' random value when the program is restarted, whereas python starts at a random random value.
+
+random numbers - question 2
+    > It gives the current state of the random generator. This state is not random, but determined by the seed and the number of random numbers pulled out of the generator.
+Explanation: 
+    Note: Using Matlab 2015b.
+    in matlab the code
+        xr = rng
+        rand()
+        xr = rng
+        rng(5)
+        xr = rng
+    returns:
+        xr =
+            Type: 'twister'
+            Seed: 0
+            State [625x1 uint32]
+        ans = 0.8147
+        xr =
+            Type: 'twister'
+            Seed: 0
+            State [625x1 uint32]
+        xr =
+            Type: 'twister'
+            Seed: 5
+            State [625x1 uint32]
+    This demonstrates that it only returns the seed and the state.
+
+variables - question 1
+    > 7.577564476958854
+script:
+        import numpy as np
+    import numpy.random as rnd
+    rnd.seed(10)
+    randomArray = rnd.rand(15,7)
+    columnSix = randomArray[:,5]
+    sum = 0
+    for i in columnSix:
+        sum += i
+    print(sum)
+
+variables - question 2
+    > 26
+script:
+    A = np.identity(26)
+    trace = np.trace(A)
+    print(trace)
+    # I mean of course the sum of the diagonal is just the dimension of the identity matrix...
+
+variables - question 3
+    > 43.603383077
+script:
+    import numpy as np
+    import numpy.random as rnd
+
+    rnd.seed(4)
+    A = rnd.rand(6,6)
+    rowVector = np.array([2,3,4,5,6,7])
+    A[4] = rowVector
+    print(A)
+    sum = np.sum(A)
+    print(sum)
+
+variables - question 4
+    > 21
+script:
+    rnd.seed(7)
+    A = rnd.randn(5,5)
+    A = np.round(A,decimals=0)
+    rowVector = np.arange(-2,3).reshape((1,5))
+    columnVector = np.arange(0,6).reshape((6, 1))
+    A = np.vstack((A,rowVector))
+    A = np.hstack((A,columnVector))
+    print(A)
+    B = np.where(A != 0)
+    amountOfnonZero = len(B[1])
+    print(amountOfnonZero)
+
+variables - question 5
+    > 17.99609100288251
+script:
+    # Be very careful not to misinterpret this as I initially did: The description is kind of misleading. I interpreted "with the transpose of the random matrix and Toeplitz matrix. " as that the final matrix must be created by transposing the combination, and not that the final matrix must be created by combining the transposes...
+
+    import numpy as np
+    import numpy.random as rnd
+    import scipy.linalg as la
+
+    rnd.seed(7)
+    A = rnd.rand(5,5)
+    t = la.toeplitz(np.arange(1,6))
+    Atrans = np.transpose(A)
+    Btrans = np.vstack((Atrans,t))
+    firstColumn = Btrans[:,0]
+    x = np.sum(firstColumn)
+    print(x)
+
+variables - question 6
+    > "Use the numpy command "size(A)" to determine the size of matrix A."
+Explanation:
+    Size(A) returns the length of a matrix.
+
+    Even though they blatantly ask here for "the size of variables in the workspace", and not for matrix length. The actual correct answer would be locals() to some degree, but it still does not show the size of all variables in the scope.
+
+operations - question 1
+    > real part of largest eigenvalue: 0.27367
+    > real part of smallest eigenvalue: -0.636777
+script:
+    import numpy as np
+    import numpy.random as rnd
+    import scipy.linalg as la
+
+    rnd.seed(7)
+    A = rnd.randn(5,5)
+    A = np.matrix(A)
+    ev = np.linalg.eigvals(A)
+    ev = np.absolute(ev)
+    print(ev)
+
+operations: question 2
+    > d: 53.13010235415598
+    > e: -108.43494882292202
+    > f: -172.8749836510982
+script:
+    d = 3 + 4j
+    e= -1 + -3j
+    f = -8 + -1j
+
+    d1 = np.angle(d,deg=True)
+    e1 = np.angle(e,deg=True)
+    f1 = np.angle(f,deg=True)
+    print(d1, e1, f1)
+
+operations: question 3
+    > 36.295158959853296
+script:
+    a = np.matrix(np.arange(0,5,0.02))
+    b = np.sin(a)
+    value = np.sum(np.array(b))
+    print(value)
+
+operations: question 4
+    > 87.38153346962501
+script:
+    rnd.seed(5)
+    A = np.array(rnd.randn(20,70))
+    B = A[ np.where( A > 2)]
+    print(np.sum(B))
+
+operations: question 5
+    > 95.34
+script
+    rnd.seed(7)
+    numbers = rnd.randn(5000)
+    nInRange = numbers[ np.where(numbers <= abs(2))]
+    print(nInRange)
+    percentage = len(nInRange)/len(numbers) * 100
+    print(percentage)
+
+cooling - question 1
+    > The temperature in the fridge compartment
+    > The temperature in the freezer compartment
+
+    > The temperature in the kitchen
+    > The status of the motor (on or off)
+
+Explanation:
+    The only thing you want to control is the temperature in the fridge- and freezer compartment. The lead cause effecting it is the temperature difference, so the temperature in the kitchen, and what changes it: the status of the motor.
+
+cooling - question 2
+    > tempfinal = -20
+    > t_90% = 11520
+    > t_63% = 4972
+script:
+    finalFridgeTemp = plotData['t1'][-1]
+    print('finalfridgeTemp = ',finalFridgeTemp)
+
+    #set percentage to 0.9 or 0.63
+    percentage = 0.9
+
+    findValue = t_kitchen - (20 + abs(finalFridgeTemp))*percentage
+    timeIndex = np.where(abs(plotData['t1'] - findValue) < 0.05)
+    print(plotData['t'][timeIndex])
+
+cooling - question 3
+    > The model is not linear
+Explanation:
+    making the input signal twice as high does not make the output twice as high.
+
+cooling - question 4
+    > tempfinal = -20
+    > t_90% = 23020
+    > t_63% = 9961
+script:
+    # change this in the top section
+    fridge_cap = 2 * 50000       # thermal capacity, Joule/deg
+    freeze_cap = 2 * 50000       # thermal capacity, Joule/deg
+
+    # same code as before:
+    finalFridgeTemp = plotData['t1'][-1]
+    print('finalfridgetemp = ',finalFridgeTemp)
+    percentage = 0.9
+    findValue = t_kitchen - (20 + abs(finalFridgeTemp))*percentage
+    print('findvalue = ',findValue)
+    timeIndex = np.where(abs(plotData['t1'] - findValue) < 0.05)
+    print(plotData['t'][timeIndex])
+
+cooling - question 5
+    > motor on: 4.5
+    > motor off: 3.5
+    > final temp: -20
+    NOTE: GIVING EXACT NUMERICAL ANSWER YEILDS WRONG. FINAL TEMP MUST BE -20
+Explanation:
+    t_thermostat = 4.0;       # thermostat nominal setting
+    thermo_range = 0.5;  
+
+    so it turns on at 4 - 0.5 and turns off at 4 + 0.5.
+
+    finalCoolTemp = plotData['t2'][-1]
+    print('finalCooltemp = ',finalCoolTemp)
+
+conclusion:
+Feedback:
+    The number rouding is not very lenient.
+
+    Variables question 5 is asked in a way that you can interpret it in multiple ways: The description is kind of misleading. I interpreted "with the transpose of the random matrix and Toeplitz matrix. " as that the final matrix must be created by transposing the combination, and not that the final matrix must be created by combining the transposes...
+
+    Variables question 6 is also very vague. if you say 'size', I would think of bytesize. Not specifically the amount of elements in a matrix, as is assumed there. It never even specifically states the case of a matrix, only that of 'variables in the workspace'.
+
+    For Cooling question 2 it would be a lot nicer to point out in the description that you would need 90% difference from the original reference temperature and not from the end reference instead of only after the answer has been submitted. I mean, I could've come up with it but it's such an easy thing to miss and completely *not* the point of the exercise.
